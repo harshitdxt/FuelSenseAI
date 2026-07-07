@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction History — FuelSense AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/fuelsense-core.css' %}">
+<link rel="stylesheet" href="{% static 'css/components/navbar.css' %}">
+<link rel="stylesheet" href="{% static 'css/components/footer.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/cards.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/forms.css' %}">
+<style>
+  /* Table markup for this page relies on .history-table classes.
+     Move these rules into cards.css when you next touch that file —
+     kept here inline for now since no dedicated stylesheet was defined for history. */
+  .history-toolbar{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:24px;}
+  .history-filters{display:flex;gap:12px;flex-wrap:wrap;}
+  .history-search{
+    background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:10px 14px;color:var(--text-primary);font-family:var(--font-body);font-size:0.88rem;min-width:220px;
+  }
+  .history-search:focus{outline:none;border-color:var(--accent-teal);}
+  select.history-select{
+    background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:10px 14px;color:var(--text-primary);font-family:var(--font-body);font-size:0.88rem;
+  }
+  .history-table-wrap{overflow-x:auto;}
+  table.history-table{width:100%;border-collapse:collapse;font-size:0.9rem;}
+  table.history-table th{
+    text-align:left;padding:14px 16px;color:var(--text-dim);font-family:var(--font-mono);
+    font-size:0.72rem;letter-spacing:0.06em;border-bottom:1px solid var(--border-strong);white-space:nowrap;
+  }
+  table.history-table td{padding:16px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  table.history-table tbody tr{transition:background .15s ease;}
+  table.history-table tbody tr:hover{background:var(--surface-hover);}
+  .status-pill{font-family:var(--font-mono);font-size:0.72rem;padding:4px 10px;border-radius:100px;}
+  .status-pill.stable{color:var(--accent-teal);background:rgba(53,208,181,0.1);}
+  .status-pill.moderate{color:var(--accent-amber);background:rgba(242,169,59,0.1);}
+  .status-pill.volatile{color:var(--danger);background:rgba(232,101,75,0.1);}
+  .diff-up{color:var(--accent-teal);font-family:var(--font-mono);}
+  .diff-down{color:var(--danger);font-family:var(--font-mono);}
+  .history-pagination{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:24px;}
+  .page-btn{
+    width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+    color:var(--text-muted);font-family:var(--font-mono);font-size:0.82rem;
+    display:flex;align-items:center;justify-content:center;transition:all .18s ease;
+  }
+  .page-btn:hover{border-color:var(--accent-teal);color:var(--text-primary);}
+  .page-btn.active{background:var(--accent-amber);color:#14100A;border-color:var(--accent-amber);font-weight:600;}
+  .no-results{padding:40px;text-align:center;color:var(--text-muted);display:none;}
+</style>
+</head>
+<body>
+
+<div class="mouse-glow"></div>
+
+<header class="site-header">
+  <nav class="site-nav wrap">
+
+    <a href="{% url 'home' %}" class="logo">
+      <img src="{% static 'images/logo.png' %}" alt="FuelSense AI Logo" class="logo-img">
+      <span>FuelSense AI</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+      <li><a href="{% url 'predict' %}">Predict</a></li>
+      <li><a href="{% url 'history' %}" class="active">History</a></li>
+      <li><a href="{% url 'about' %}">About</a></li>
+    </ul>
+
+    <div class="nav-cta">
+      <a href="{% url 'predict' %}" class="btn btn-primary">
+        Predict Now
+      </a>
+    </div>
+
+  </nav>
+</header>
+
+<main class="dash-main">
+  <div class="wrap-wide">
+
+    <div class="dash-header reveal">
+      <div class="dash-title">
+        <div class="section-eyebrow"><span class="dot"></span> PREDICTION HISTORY</div>
+        <h1>Every prediction the model has made</h1>
+        <p class="dash-sub">Search, filter, and page through past AI Insight Engine runs.</p>
+      </div>
+    </div>
+
+    <div class="glass-card reveal" style="padding:28px;">
+      <div class="history-toolbar">
+        <input type="text" class="history-search" id="historySearch" placeholder="Search by date or price…">
+        <div class="history-filters">
+          <select class="history-select" id="statusFilter">
+            <option value="all">All market statuses</option>
+            <option value="stable">Stable</option>
+            <option value="moderate">Moderate</option>
+            <option value="volatile">Volatile</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="history-table-wrap">
+        <table class="history-table" id="historyTable">
+          <thead>
+            <tr>
+              <th>Prediction</th>
+              <th>Date</th>
+              <th>Confidence</th>
+              <th>Market Status</th>
+              <th>Difference</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr data-status="stable"><td>₹101.72 / L</td><td>2026-07-03</td><td>87%</td><td><span class="status-pill stable">Stable</span></td><td class="diff-up">▲ ₹5.00</td></tr>
+            <tr data-status="stable"><td>₹100.90 / L</td><td>2026-07-02</td><td>85%</td><td><span class="status-pill stable">Stable</span></td><td class="diff-up">▲ ₹4.10</td></tr>
+            <tr data-status="moderate"><td>₹99.40 / L</td><td>2026-07-01</td><td>78%</td><td><span class="status-pill moderate">Moderate</span></td><td class="diff-up">▲ ₹2.60</td></tr>
+            <tr data-status="moderate"><td>₹97.80 / L</td><td>2026-06-30</td><td>74%</td><td><span class="status-pill moderate">Moderate</span></td><td class="diff-down">▼ ₹1.10</td></tr>
+            <tr data-status="volatile"><td>₹95.20 / L</td><td>2026-06-29</td><td>68%</td><td><span class="status-pill volatile">Volatile</span></td><td class="diff-down">▼ ₹3.40</td></tr>
+            <tr data-status="stable"><td>₹96.60 / L</td><td>2026-06-28</td><td>88%</td><td><span class="status-pill stable">Stable</span></td><td class="diff-up">▲ ₹1.90</td></tr>
+            <tr data-status="stable"><td>₹96.10 / L</td><td>2026-06-27</td><td>86%</td><td><span class="status-pill stable">Stable</span></td><td class="diff-up">▲ ₹0.80</td></tr>
+            <tr data-status="moderate"><td>₹94.50 / L</td><td>2026-06-26</td><td>79%</td><td><span class="status-pill moderate">Moderate</span></td><td class="diff-down">▼ ₹0.60</td></tr>
+            <tr data-status="volatile"><td>₹93.10 / L</td><td>2026-06-25</td><td>66%</td><td><span class="status-pill volatile">Volatile</span></td><td class="diff-down">▼ ₹2.20</td></tr>
+            <tr data-status="stable"><td>₹94.80 / L</td><td>2026-06-24</td><td>90%</td><td><span class="status-pill stable">Stable</span></td><td class="diff-up">▲ ₹1.30</td></tr>
+          </tbody>
+        </table>
+        <div class="no-results" id="noResults">No predictions match your search.</div>
+      </div>
+
+      <div class="history-pagination" id="historyPagination"></div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 21V9L12 4L18 9V21" stroke="#14100A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 21V14H15V21" stroke="#14100A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      FuelSense AI
+    </div>
+    <div class="footer-links">
+      <a href="/dashboard/">Dashboard</a>
+      <a href="/history/">History</a>
+      <a href="/about/">About</a>
+    </div>
+    <div class="footer-note">BUILT BY HARSHIT DIXIT</div>
+  </div>
+</footer>
+
+<script src="{% static 'js/fuelsense-core.js' %}"></script>
+<script src="{% static 'js/utils/animation.js' %}"></script>
+<script>
+  /* Table search/filter/pagination — placeholder inline script.
+     No dedicated history.js exists in the current file structure;
+     move this into one (e.g. static/js/history/history.js) if you want
+     it to match the modular pattern used elsewhere. */
+  document.addEventListener('DOMContentLoaded', function () {
+    const rows = Array.from(document.querySelectorAll('#historyBody tr'));
+    const search = document.getElementById('historySearch');
+    const statusFilter = document.getElementById('statusFilter');
+    const pagination = document.getElementById('historyPagination');
+    const noResults = document.getElementById('noResults');
+    const perPage = 5;
+    let currentPage = 1;
+
+    function getFiltered() {
+      const term = search.value.trim().toLowerCase();
+      const status = statusFilter.value;
+      return rows.filter(r => {
+        const matchesTerm = !term || r.textContent.toLowerCase().includes(term);
+        const matchesStatus = status === 'all' || r.dataset.status === status;
+        return matchesTerm && matchesStatus;
+      });
+    }
+
+    function render() {
+      const filtered = getFiltered();
+      rows.forEach(r => r.style.display = 'none');
+
+      const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+      if (currentPage > totalPages) currentPage = totalPages;
+      const start = (currentPage - 1) * perPage;
+      const pageRows = filtered.slice(start, start + perPage);
+      pageRows.forEach(r => r.style.display = '');
+
+      noResults.style.display = filtered.length === 0 ? 'block' : 'none';
+
+      pagination.innerHTML = '';
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+        btn.textContent = i;
+        btn.addEventListener('click', () => { currentPage = i; render(); });
+        pagination.appendChild(btn);
+      }
+    }
+
+    search.addEventListener('input', () => { currentPage = 1; render(); });
+    statusFilter.addEventListener('change', () => { currentPage = 1; render(); });
+    render();
+  });
+</script>
+</body>
+</html>

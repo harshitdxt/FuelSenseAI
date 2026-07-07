@@ -1,0 +1,140 @@
+/* ===========================================================
+   predictor/static/css/dashboard/cards.css
+   FuelSense AI — Card Components
+
+   Contains ONLY: fuel intelligence cards, insight cards,
+   market cards, prediction cards. Extends .glass-card from
+   fuelsense-core.css. No page layout/grid rules here —
+   those belong in dashboard/dashboard.css.
+   =========================================================== */
+
+/* ---------- Intelligence / fuel cards ---------- */
+.intel-card{padding:22px 20px;}
+.intel-icon{
+  width:34px;height:34px;border-radius:9px;background:var(--surface);
+  display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+  border:1px solid var(--border-strong);
+}
+.intel-icon svg{width:17px;height:17px;stroke:var(--accent-amber);}
+.intel-label{font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;}
+.intel-value{font-family:var(--font-mono);font-weight:600;font-size:1.35rem;color:var(--text-primary);}
+.intel-value.amber{color:var(--accent-amber);}
+.intel-value.teal{color:var(--accent-teal);}
+.intel-delta{font-family:var(--font-mono);font-size:0.75rem;margin-top:6px;}
+.intel-delta.up{color:var(--accent-teal);}
+.intel-delta.down{color:var(--danger);}
+
+/* ---------- Market cards ---------- */
+.market-card{padding:20px;}
+.market-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.market-icon{
+  width:32px;height:32px;border-radius:8px;background:var(--surface);
+  display:flex;align-items:center;justify-content:center;border:1px solid var(--border-strong);
+}
+.market-icon svg{width:15px;height:15px;stroke:var(--accent-teal);}
+.market-name{font-size:0.82rem;color:var(--text-muted);margin-top:2px;}
+.market-trend{
+  font-family:var(--font-mono);font-size:0.75rem;padding:3px 8px;border-radius:100px;
+}
+.market-trend.up{color:var(--accent-teal);background:rgba(53,208,181,0.1);}
+.market-trend.down{color:var(--danger);background:rgba(232,101,75,0.1);}
+.market-value{font-family:var(--font-mono);font-weight:600;font-size:1.3rem;margin-bottom:10px;}
+
+/* ---------- Prediction card ---------- */
+.prediction-panel{padding:36px;position:relative;overflow:hidden;}
+.prediction-panel::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 90% 0%, rgba(242,169,59,0.08), transparent 55%);
+  pointer-events:none;
+}
+.prediction-inner{position:relative;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;}
+@media (max-width:760px){ .prediction-inner{grid-template-columns:1fr;text-align:center;} }
+
+.pred-result-label{font-family:var(--font-mono);font-size:0.75rem;color:var(--text-dim);letter-spacing:0.06em;margin-bottom:10px;}
+.pred-result-value{
+  font-family:var(--font-mono);font-weight:700;font-size:clamp(2.6rem,5vw,3.6rem);
+  color:var(--accent-amber);text-shadow:0 0 34px var(--amber-glow);
+}
+.pred-result-range{font-family:var(--font-mono);font-size:0.85rem;color:var(--text-muted);margin-top:10px;}
+
+/* ---------- Insight card ---------- */
+.insight-panel{padding:32px;}
+.insight-chat{display:flex;gap:14px;margin-bottom:24px;}
+.insight-avatar{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent-amber),var(--accent-teal));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 20px var(--amber-glow);
+}
+.insight-avatar svg{width:18px;height:18px;}
+.insight-bubble{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:18px 20px;font-size:0.92rem;color:var(--text-primary);line-height:1.7;flex:1;
+}
+.insight-bubble p{margin-bottom:10px;}
+.insight-bubble p:last-child{margin-bottom:0;}
+.insight-bubble .hl{color:var(--accent-amber);font-weight:600;}
+.insight-bubble .hl-teal{color:var(--accent-teal);font-weight:600;}
+
+.fi-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+@media (max-width:760px){ .fi-grid{grid-template-columns:1fr;} }
+
+.fp-row{margin-bottom:20px;}
+.fp-row:last-child{margin-bottom:0;}
+.fp-row-head{display:flex;justify-content:space-between;font-size:0.88rem;margin-bottom:8px;}
+.fp-row-head .pct{font-family:var(--font-mono);color:var(--accent-amber);font-weight:600;}
+.fp-track{height:8px;border-radius:4px;background:var(--surface);overflow:hidden;}
+.fp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent-amber-dim),var(--accent-amber));width:0%;transition:width 1.1s cubic-bezier(.2,.8,.2,1);}
+.fp-fill.teal{background:linear-gradient(90deg,#1E8E7A,var(--accent-teal));}
+
+/* ---------- Live Market Dashboard additions (Predict page) ---------- */
+
+.market-value.skeleton{
+  color:transparent;
+  display:inline-block;
+  min-width:90px;
+  min-height:1.3rem;
+}
+
+.market-sources{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:2px;
+}
+
+.source-pill{
+  display:inline-flex;
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  padding:4px 10px;
+  border-radius:100px;
+  color:var(--text-muted);
+  background:var(--surface);
+  border:1px solid var(--border);
+}
+
+.market-error{
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  background:rgba(232,101,75,0.08);
+  border:1px solid rgba(232,101,75,0.28);
+  border-radius:12px;
+  padding:14px 18px;
+  margin-top:16px;
+  color:var(--danger);
+  font-size:0.88rem;
+}
+
+.market-error.show{
+  display:flex;
+}
+
+.market-disclaimer{
+  font-size:0.78rem;
+  color:var(--text-dim);
+  margin-top:16px;
+  line-height:1.6;
+}

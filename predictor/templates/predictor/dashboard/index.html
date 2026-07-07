@@ -1,0 +1,280 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — FuelSense AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/fuelsense-core.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/cards.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard/forms.css' %}">
+<link rel="stylesheet" href="{% static 'css/components/navbar.css' %}">
+<link rel="stylesheet" href="{% static 'css/components/footer.css' %}">
+</head>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/utils/animation.js' %}"></script>
+<script src="{% static 'js/charts/chart.js' %}"></script>
+
+<body>
+
+<div class="mouse-glow"></div>
+
+<header class="site-header">
+  <nav class="site-nav wrap">
+   <a href="{% url 'home' %}" class="logo">
+    <img src="{% static 'images/logo.png' %}" alt="FuelSense AI Logo" class="logo-img">
+    <span>FuelSense AI</span>
+</a>
+    <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'dashboard' %}" class="active">Dashboard</a></li>
+    <li><a href="{% url 'predict' %}">Predict</a></li>
+    <li><a href="{% url 'history' %}">History</a></li>
+    <li><a href="{% url 'about' %}">About</a></li>
+</ul>
+    <div class="nav-cta">
+    <a href="{% url 'predict' %}" class="btn btn-primary">
+        Predict Now
+    </a>
+</div>
+  </nav>
+</header>
+
+<main class="dash-main">
+  <div class="wrap-wide">
+
+    <!-- PAGE HEADER -->
+    <div class="dash-header reveal">
+      <div class="dash-title">
+        <div class="section-eyebrow"><span class="dot"></span> TODAY'S FUEL INTELLIGENCE</div>
+        <h1>Market snapshot, live from the model</h1>
+        <p class="dash-sub">Everything below reflects the latest crude oil and currency signals fed into FuelSense AI.</p>
+      </div>
+      <div class="dash-actions">
+        <span class="last-updated" id="lastUpdated"><span class="dot"></span> Updated just now</span>
+        <button class="btn btn-ghost refresh-btn" id="refreshBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh Market
+        </button>
+      </div>
+    </div>
+
+    <!-- INTELLIGENCE GRID -->
+    <div class="intel-grid reveal">
+      <div class="glass-card intel-card">
+        <div class="intel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <div class="intel-label">Market Status</div>
+        <div class="intel-value teal">Stable</div>
+      </div>
+      <div class="glass-card intel-card">
+        <div class="intel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></div>
+        <div class="intel-label">Market Health</div>
+        <div class="intel-value">Good</div>
+      </div>
+      <div class="glass-card intel-card">
+        <div class="intel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+        <div class="intel-label">Current Retail Price</div>
+        <div class="intel-value" data-countup data-count="96.72" data-decimals="2" data-prefix="₹" data-suffix="/L">₹0.00/L</div>
+      </div>
+      <div class="glass-card intel-card">
+        <div class="intel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+        <div class="intel-label">AI Predicted Price</div>
+        <div class="intel-value amber" data-countup data-count="101.72" data-decimals="2" data-prefix="₹" data-suffix="/L">₹0.00/L</div>
+      </div>
+      <div class="glass-card intel-card">
+        <div class="intel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+        <div class="intel-label">Expected Price Range</div>
+        <div class="intel-value" style="font-size:1.05rem;">₹100.10 – ₹103.40</div>
+      </div>
+      <div class="glass-card intel-card">
+        <div class="intel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/></svg></div>
+        <div class="intel-label">Prediction Confidence</div>
+        <div class="intel-value teal" data-countup data-count="87" data-suffix="%">0%</div>
+        <div class="intel-delta up">▲ Difference: ₹5.00</div>
+      </div>
+    </div>
+
+    <!-- LIVE MARKET CENTER -->
+    <section class="dash-section">
+      <div class="dash-section-head reveal">
+        <div>
+          <div class="section-eyebrow">LIVE MARKET CENTER</div>
+          <h2>The signals feeding the model</h2>
+        </div>
+      </div>
+      <div class="market-grid reveal">
+        <div class="glass-card market-card">
+          <div class="market-card-head">
+            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="market-name" style="margin-top:8px;">Brent Crude</div></div>
+            <span class="market-trend up">▲ 0.6%</span>
+          </div>
+          <div class="market-value" id="dashBrent">$84.12</div>
+          <div data-spark="brent" data-trend="up"></div>
+        </div>
+        <div class="glass-card market-card">
+          <div class="market-card-head">
+            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="market-name" style="margin-top:8px;">WTI Crude</div></div>
+            <span class="market-trend down">▼ 0.3%</span>
+          </div>
+          <div class="market-value">$80.65</div>
+          <div data-spark="wti" data-trend="down"></div>
+        </div>
+        <div class="glass-card market-card">
+          <div class="market-card-head">
+            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/></svg></div><div class="market-name" style="margin-top:8px;">USD / INR</div></div>
+            <span class="market-trend down">▼ 0.1%</span>
+          </div>
+          <div class="market-value" id="dashUsdInr">83.47</div>
+          <div data-spark="usdinr" data-trend="down"></div>
+        </div>
+        <div class="glass-card market-card">
+          <div class="market-card-head">
+            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></div><div class="market-name" style="margin-top:8px;">Petrol</div></div>
+            <span class="market-trend up">▲ 0.2%</span>
+          </div>
+          <div class="market-value" id="dashPetrol">₹96.72</div>
+          <div data-spark="petrol" data-trend="up"></div>
+        </div>
+        <div class="glass-card market-card">
+          <div class="market-card-head">
+            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></div><div class="market-name" style="margin-top:8px;">Diesel</div></div>
+            <span class="market-trend up">▲ 0.1%</span>
+          </div>
+          <div class="market-value" id="dashDiesel">₹89.62</div>
+          <div data-spark="petrol" data-trend="up"></div>
+        </div>
+        <div class="glass-card market-card">
+          <div class="market-card-head">
+            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div><div class="market-name" style="margin-top:8px;">Inflation</div></div>
+            <span class="market-trend down">▼ 0.1%</span>
+          </div>
+          <div class="market-value" id="dashInflation">5.1%</div>
+          <div data-spark="usdinr" data-trend="down"></div>
+        </div>
+        <div class="glass-card market-card">
+          <div class="market-card-head">
+            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="market-name" style="margin-top:8px;">Market Status</div></div>
+            <span class="market-trend up">Live</span>
+          </div>
+          <div class="market-value" id="dashMarketHealth">Stable</div>
+          <div data-spark="brent" data-trend="up"></div>
+        </div>
+        <div class="glass-card market-card">
+          <div class="market-card-head">
+            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div class="market-name" style="margin-top:8px;">Next Refresh</div></div>
+            <span class="market-trend up">Auto</span>
+          </div>
+          <div class="market-value" id="dashLastUpdated">15 min</div>
+          <div data-spark="wti" data-trend="down"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICE TREND -->
+    <section class="dash-section">
+      <div class="glass-card chart-panel reveal">
+        <div class="chart-toolbar">
+          <div>
+            <div class="section-eyebrow">PRICE TREND</div>
+            <h2 style="font-size:1.35rem;">Petrol price over time</h2>
+          </div>
+          <div class="range-toggle">
+            <button data-range="1D">1D</button>
+            <button data-range="1W" class="active">1W</button>
+            <button data-range="1M">1M</button>
+            <button data-range="1Y">1Y</button>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="priceTrendChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI INSIGHT ENGINE -->
+    <section class="dash-section" id="insight">
+      <div class="dash-section-head reveal">
+        <div>
+          <div class="section-eyebrow">AI INSIGHT ENGINE</div>
+          <h2>What the model is seeing</h2>
+        </div>
+      </div>
+      <div class="glass-card insight-panel reveal">
+        <div class="insight-chat">
+          <div class="insight-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" fill="#0A0E13"/></svg>
+          </div>
+          <div class="insight-bubble" id="insightBubble">
+            <p>Today's market conditions remain <span class="hl-teal">stable</span>. Crude oil is the dominant driver of this prediction, contributing the largest share of the model's decision.</p>
+            <p>The exchange rate has a <span class="hl">moderate</span> secondary influence on today's estimate.</p>
+            <p>Historical trends indicate <span class="hl-teal">low short-term volatility</span>, and market confidence remains <span class="hl">high</span>.</p>
+          </div>
+        </div>
+
+        <div class="fi-grid" style="margin-top:8px;">
+          <div>
+            <div class="fp-row">
+              <div class="fp-row-head"><span>Crude Oil Price</span><span class="pct">78%</span></div>
+              <div class="fp-track"><div class="fp-fill" data-width="78"></div></div>
+            </div>
+            <div class="fp-row">
+              <div class="fp-row-head"><span>USD-INR Exchange Rate</span><span class="pct">22%</span></div>
+              <div class="fp-track"><div class="fp-fill teal" data-width="22"></div></div>
+            </div>
+          </div>
+          <p class="section-desc">Feature importance is read directly from the trained Random Forest Regressor — the same values the model itself uses to weigh each signal.</p>
+        </div>
+      </div>
+    </section>
+
+  
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+
+    <div class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 21V9L12 4L18 9V21"
+                stroke="#14100A"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+          <path d="M9 21V14H15V21"
+                stroke="#14100A"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+        </svg>
+      </span>
+      FuelSense AI
+    </div>
+
+    <div class="footer-links">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'predict' %}">Predict</a>
+      <a href="{% url 'history' %}">History</a>
+      <a href="{% url 'about' %}">About</a>
+    </div>
+
+    <div class="footer-note">
+      BUILT BY HARSHIT DIXIT
+    </div>
+
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="{% static 'js/fuelsense-core.js' %}"></script>
+<script src="{% static 'js/services/market-store.js' %}"></script>
+<script src="{% static 'js/dashboard/dashboard.js' %}"></script>
+</body>
+</html>

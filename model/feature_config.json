@@ -1,0 +1,15 @@
+{
+    "feature_order": [
+        "city",
+        "fuel",
+        "Brent_Crude",
+        "USD_INR",
+        "Month",
+        "Year",
+        "Day",
+        "DayOfWeek"
+    ],
+    "target": "price_inr_per_litre",
+    "model": "RandomForestRegressor",
+    "version": "1.0"
+}

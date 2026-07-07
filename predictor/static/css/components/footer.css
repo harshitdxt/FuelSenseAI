@@ -1,0 +1,38 @@
+/* ===========================================================
+   predictor/static/css/components/footer.css
+   FuelSense AI — Footer Component
+
+   Contains ONLY footer styling. Depends on tokens defined in
+   fuelsense-core.css (must be loaded first).
+   =========================================================== */
+
+footer.site-footer{
+  border-top:1px solid var(--border);
+  padding:48px 0 40px;
+}
+
+.footer-grid{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:20px;
+}
+
+.footer-links{display:flex;gap:26px;flex-wrap:wrap;}
+.footer-links a{
+  color:var(--text-muted);
+  font-size:0.85rem;
+  transition:color .2s ease;
+}
+.footer-links a:hover{color:var(--text-primary);}
+
+.footer-note{
+  color:var(--text-dim);
+  font-size:0.8rem;
+  font-family:var(--font-mono);
+}
+
+@media (max-width:600px){
+  .footer-grid{flex-direction:column;align-items:flex-start;}
+}
