@@ -253,9 +253,9 @@ http://127.0.0.1:8000
 
 **Harshit Dixit**
 
-B.Tech Computer Science Engineering
+AI & Web Developer
 
-Learning Data Science • Machine Learning • Django • AI
+Building intelligent web applications with Machine Learning, Django, and Python.
 
 GitHub:
 https://github.com/harshitdxt
