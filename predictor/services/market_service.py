@@ -4,7 +4,6 @@ import logging
 import requests
 from datetime import datetime
 
-
 from dotenv import load_dotenv
 
 # ============================================
@@ -83,6 +82,10 @@ def get_live_usd_inr():
     return float(rate)
 
 
+# ============================================
+# World Bank API
+# ============================================
+
 def get_india_inflation():
 
     url = (
@@ -102,6 +105,42 @@ def get_india_inflation():
 
 
 # ============================================
+# Petrol Price API (not yet integrated)
+# ============================================
+# TODO: replace this with a real call once a live retail petrol price
+# source is connected. Returning None (not a fake number) so the
+# frontend can clearly show "—" / "Coming soon" instead of a value
+# that looks live but isn't. This is the only intentional placeholder
+# left in the live-data path, and it's explicit rather than hidden
+# inside a mixed field like the old "petrol_price".
+
+def get_live_petrol_price():
+    return None
+
+
+# ============================================
+# Market Health (derived from live indicators only —
+# no AI/model involvement, so it belongs here, not in
+# prediction_service.py)
+# ============================================
+
+def calculate_market_health(inflation):
+    """
+    Simple, transparent heuristic based purely on live inflation data.
+    Replace with a richer live-data model later (e.g. factoring in
+    Brent/USD-INR volatility) — the important part is that this is a
+    real calculation now, not a hardcoded string.
+    """
+    if inflation is None:
+        return "Unknown"
+    if inflation < 4:
+        return "Stable"
+    if inflation < 6:
+        return "Moderate"
+    return "Volatile"
+
+
+# ============================================
 # Cached Market Data
 # ============================================
 
@@ -118,11 +157,11 @@ def get_live_market_data():
         return {
             "brent_crude": _market_cache["brent"],
             "usd_inr": _market_cache["usd_inr"],
+            "live_petrol_price": get_live_petrol_price(),
             "inflation": _market_cache["inflation"],
-            "market_health": "Stable",
+            "market_health": calculate_market_health(_market_cache["inflation"]),
             "last_updated": datetime.now().strftime("%I:%M %p"),
-            "sources": ["OilPriceAPI", "Frankfurter"],
-            "inflation": _market_cache["inflation"],
+            "sources": ["OilPriceAPI", "Frankfurter", "World Bank"],
         }
 
     logger.info("Fetching Live Market Data")
@@ -133,7 +172,6 @@ def get_live_market_data():
 
     inflation = get_india_inflation()
 
-
     _market_cache["timestamp"] = current_time
     _market_cache["brent"] = brent
     _market_cache["usd_inr"] = usd
@@ -142,8 +180,9 @@ def get_live_market_data():
     return {
         "brent_crude": brent,
         "usd_inr": usd,
+        "live_petrol_price": get_live_petrol_price(),
         "inflation": inflation,
-        "market_health": "Stable",
+        "market_health": calculate_market_health(inflation),
         "last_updated": datetime.now().strftime("%I:%M %p"),
         "sources": ["OilPriceAPI", "Frankfurter", "World Bank"],
     }

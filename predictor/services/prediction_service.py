@@ -43,6 +43,11 @@ def get_prediction_range(price, confidence):
 
 
 def generate_prediction(city, fuel, brent_crude, usd_inr):
+    """
+    The only source of AI output. Never touches live market data
+    directly — brent_crude / usd_inr are passed in by the caller
+    (dashboard_service.py), already fetched from market_service.py.
+    """
 
     predicted_price = predict_price(
         city=city,
@@ -64,10 +69,18 @@ def generate_prediction(city, fuel, brent_crude, usd_inr):
     market_health = get_market_health(confidence)
 
     return {
-        "predicted_price": predicted_price,
+        # Renamed from "predicted_price" — that name was ambiguous
+        # against market_service's live petrol price. This key makes
+        # it unmistakable that the value is a model output, not a
+        # live number.
+        "ai_predicted_price": predicted_price,
         "confidence": confidence,
-        "market_health": market_health,
         "range_low": range_low,
         "range_high": range_high,
+        # AI-confidence-derived market health. Kept distinct from
+        # market_service's live-data-derived market_health — dashboard_service.py
+        # namespaces this as "ai_market_health" to avoid colliding
+        # with the live one.
+        "market_health": market_health,
         "insight": "Prediction generated successfully using the Random Forest model."
     }
