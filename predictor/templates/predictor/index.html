@@ -337,26 +337,62 @@
      =========================================================== */
 
   // ---- Ticker (placeholders — real per-city data comes later) ----
-  const tickerData = [
-    { k: 'CRUDE OIL (BRENT)', v: '$84.12', dir: 'up' },
-    { k: 'USD / INR', v: '83.47', dir: 'down' },
-    { k: 'PETROL — DELHI', v: '₹94.72/L', dir: 'up' },
-    { k: 'PETROL — MUMBAI', v: '₹103.44/L', dir: 'up' },
-    { k: 'MODEL CONFIDENCE', v: '87%', dir: 'up' },
-    { k: 'CRUDE OIL (WTI)', v: '$80.65', dir: 'down' },
-  ];
-  (function buildTicker() {
-    const track = document.getElementById('tickerTrack');
-    if (!track) return;
-    let html = '';
+  /* ---------- Live Homepage Ticker ---------- */
+
+const tickerTrack = document.getElementById("tickerTrack");
+
+function buildTicker(data) {
+
+    if (!tickerTrack) return;
+
+    const tickerData = [
+        {
+            k: "BRENT CRUDE",
+            v: `$${data.brent_crude.toFixed(2)}`,
+            dir: "up"
+        },
+        {
+            k: "USD / INR",
+            v: data.usd_inr.toFixed(2),
+            dir: "up"
+        },
+        {
+            k: "AI CONFIDENCE",
+            v: `${data.confidence}%`,
+            dir: "up"
+        },
+        {
+            k: "MARKET HEALTH",
+            v: data.market_health,
+            dir: "up"
+        },
+        {
+            k: "UPDATED",
+            v: data.last_updated,
+            dir: "up"
+        }
+    ];
+
+    let html = "";
+
     for (let i = 0; i < 2; i++) {
-      tickerData.forEach((item) => {
-        const arrow = item.dir === 'up' ? '<span class="up">▲</span>' : '<span class="down">▼</span>';
-        html += `<div class="ticker-item"><span>${item.k}</span><span class="v">${item.v}</span>${arrow}</div>`;
-      });
+
+        tickerData.forEach(item => {
+
+            html += `
+                <div class="ticker-item">
+                    <span>${item.k}</span>
+                    <span class="v">${item.v}</span>
+                    <span class="up">▲</span>
+                </div>
+            `;
+
+        });
+
     }
-    track.innerHTML = html;
-  })();
+
+    tickerTrack.innerHTML = html;
+}
 
   // ---- Hero price board, driven by the existing MarketStore service ----
   // Assumed shape of the object MarketStore.load() resolves with
@@ -428,7 +464,8 @@
 
     if (liveBadge)
         liveBadge.innerHTML = `<span class="dot"></span> LIVE · Updated ${data.last_updated}`;
-
+      
+    buildTicker(data);
 }
 
   document.addEventListener('DOMContentLoaded', () => {
