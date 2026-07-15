@@ -44,22 +44,18 @@ def get_live_brent_price():
         "Authorization": f"Token {OILPRICE_API_KEY}"
     }
 
-    url = (
-        "https://api.oilpriceapi.com/v1/prices/latest"
-        "?by_code=BRENT_CRUDE_USD"
-    )
+    url = "https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD"
 
     response = requests.get(url, headers=headers, timeout=10)
+
+    print("STATUS :", response.status_code)
+    print("BODY :", response.text)
 
     response.raise_for_status()
 
     data = response.json()
 
-    price = data["data"]["price"]
-
-    logger.info(f"Live Brent Price: {price}")
-
-    return float(price)
+    return float(data["data"]["price"])
 
 # ============================================
 # Frankfurter API

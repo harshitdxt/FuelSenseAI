@@ -79,11 +79,6 @@
           <div class="intel-value" id="liveUsdInr">—</div>
         </div>
         <div class="glass-card intel-card">
-          <div class="intel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-          <div class="intel-label">Current Retail Petrol Price</div>
-          <div class="intel-value" id="livePetrol" style="font-size:1.05rem;">—</div>
-        </div>
-        <div class="glass-card intel-card">
           <div class="intel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
           <div class="intel-label">Inflation · World Bank</div>
           <div class="intel-value" id="liveInflation">—</div>
@@ -115,107 +110,12 @@
           <div class="intel-label">Prediction Confidence</div>
           <div class="intel-value teal" id="aiConfidence">—</div>
         </div>
-        <div class="glass-card intel-card">
-          <div class="intel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-          <div class="intel-label">Difference from Live Price</div>
-          <div class="intel-value" id="aiDifference" style="font-size:0.95rem;">—</div>
-        </div>
+
       </div>
     </section>
 
-    <!-- LIVE MARKET CENTER (unchanged structure — unbacked cards show
-         an honest placeholder instead of a fake number) -->
-    <section class="dash-section">
-      <div class="dash-section-head reveal">
-        <div>
-          <div class="section-eyebrow">LIVE MARKET CENTER</div>
-          <h2>The signals feeding the model</h2>
-        </div>
-      </div>
-      <div class="market-grid reveal">
-        <div class="glass-card market-card">
-          <div class="market-card-head">
-            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="market-name" style="margin-top:8px;">Brent Crude</div></div>
-            <span class="market-trend up">Live</span>
-          </div>
-          <div class="market-value" id="dashBrent">—</div>
-        </div>
-        <div class="glass-card market-card">
-          <div class="market-card-head">
-            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="market-name" style="margin-top:8px;">WTI Crude</div></div>
-          </div>
-          <!-- NOT YET CONNECTED: market_service.py only fetches Brent -->
-          <div class="market-value">Coming soon</div>
-        </div>
-        <div class="glass-card market-card">
-          <div class="market-card-head">
-            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/></svg></div><div class="market-name" style="margin-top:8px;">USD / INR</div></div>
-            <span class="market-trend up">Live</span>
-          </div>
-          <div class="market-value" id="dashUsdInr">—</div>
-        </div>
-        <div class="glass-card market-card">
-          <div class="market-card-head">
-            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></div><div class="market-name" style="margin-top:8px;">Petrol</div></div>
-          </div>
-          <!-- NOT YET CONNECTED: live_petrol_price is null until the Petrol Price API is wired up -->
-          <div class="market-value" id="dashPetrol">Coming soon</div>
-        </div>
-        <div class="glass-card market-card">
-          <div class="market-card-head">
-            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></div><div class="market-name" style="margin-top:8px;">Diesel</div></div>
-          </div>
-          <!-- NOT YET CONNECTED: dashboard_service.py no longer fabricates this from petrol price -->
-          <div class="market-value">Coming soon</div>
-        </div>
-        <div class="glass-card market-card">
-          <div class="market-card-head">
-            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div><div class="market-name" style="margin-top:8px;">Inflation</div></div>
-            <span class="market-trend up">Live</span>
-          </div>
-          <div class="market-value" id="dashInflation">—</div>
-        </div>
-        <div class="glass-card market-card">
-          <div class="market-card-head">
-            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="market-name" style="margin-top:8px;">Market Status</div></div>
-            <span class="market-trend up">Live</span>
-          </div>
-          <div class="market-value" id="dashMarketHealth">—</div>
-        </div>
-        <div class="glass-card market-card">
-          <div class="market-card-head">
-            <div><div class="market-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div class="market-name" style="margin-top:8px;">Refresh Interval</div></div>
-            <span class="market-trend up">Auto</span>
-          </div>
-          <!-- Static and true (matches market_service.py's CACHE_DURATION), not a fake per-request value -->
-          <div class="market-value">Every 5 min</div>
-        </div>
-      </div>
-    </section>
 
-    <!-- PRICE TREND (unchanged panel — empty state until a historical endpoint exists) -->
-    <section class="dash-section">
-      <div class="glass-card chart-panel reveal">
-        <div class="chart-toolbar">
-          <div>
-            <div class="section-eyebrow">PRICE TREND</div>
-            <h2 style="font-size:1.35rem;">Petrol price over time</h2>
-          </div>
-          <div class="range-toggle">
-            <button data-range="1D" disabled>1D</button>
-            <button data-range="1W" disabled>1W</button>
-            <button data-range="1M" disabled>1M</button>
-            <button data-range="1Y" disabled>1Y</button>
-          </div>
-        </div>
-        <div class="chart-wrap">
-          <!-- NOT YET CONNECTED: dashboard_service.py returns a current snapshot only,
-               no historical time series yet. Wire FuelSenseCharts.renderPetrolHistoryChart()
-               here once that endpoint exists — do not reintroduce mock arrays. -->
-          <p class="section-desc" style="text-align:center;padding-top:60px;">Historical trend data isn't connected yet — this chart will populate once a historical pricing endpoint is available.</p>
-        </div>
-      </div>
-    </section>
+    
 
     <!-- AI INSIGHT ENGINE (unchanged structure — text now comes from the API) -->
     <section class="dash-section" id="insight">

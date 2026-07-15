@@ -110,16 +110,16 @@ async function fetchPrediction(payload) {
 
   /* ---------------- Render prediction result ---------------- */
   function renderResult(data) {
-    const { predicted_price, confidence, range_low, range_high, insight } = data;
+    const {
+    ai_predicted_price,
+    confidence,
+    range_low,
+    range_high,
+    insight
+} = data;
 
     if (predResultValue) {
-      FuelSenseCore.countUp(predResultValue, {
-        to: predicted_price,
-        decimals: 2,
-        prefix: '₹',
-        suffix: '/L',
-        duration: 900,
-      });
+      predResultValue.textContent = `₹${ai_predicted_price.toFixed(2)}/L`;
     }
     if (predResultRange) {
       predResultRange.textContent = `Expected range ₹${range_low.toFixed(2)} – ₹${range_high.toFixed(2)}`;
@@ -208,7 +208,7 @@ async function fetchPrediction(payload) {
         usd_inr,
       });
 
-      if (simPredicted) simPredicted.textContent = `₹${data.predicted_price.toFixed(2)}/L`;
+      if (simPredicted) simPredicted.textContent = `₹${data.ai_predicted_price.toFixed(2)}/L`;
       if (simConfidence) simConfidence.textContent = `${data.confidence}%`;
       if (simHealth) simHealth.textContent = marketHealthFromConfidence(data.confidence);
       if (simRange) simRange.textContent = `₹${data.range_low.toFixed(2)} – ₹${data.range_high.toFixed(2)}`;
@@ -250,6 +250,9 @@ async function fetchPrediction(payload) {
 
     if (crudeSlider && usdSlider)
         runSimulation();
+
+    // Automatically get the latest AI prediction
+    await runPrediction();
 
 }
 

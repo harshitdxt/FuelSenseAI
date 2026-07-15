@@ -399,7 +399,7 @@
 
   function renderHero(data) {
 
-    countUpPrice(boardPrice, data.petrol_price);
+    countUpPrice(boardPrice, data.ai_predicted_price);
 
     if (boardRange)
         boardRange.textContent = `Expected range ₹${data.range_low.toFixed(2)} – ₹${data.range_high.toFixed(2)}`;
@@ -408,7 +408,7 @@
         boardCrude.textContent = `$${data.brent_crude.toFixed(2)}`;
 
     if (boardCrudeTrend)
-        boardCrudeTrend.innerHTML = trendMarkup(data.brent_trend);
+        boardCrudeTrend.textContent = "";
 
     if (boardUsd)
         boardUsd.textContent = data.usd_inr.toFixed(2);
